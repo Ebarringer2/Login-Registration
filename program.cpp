@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 #include <string>
 #include <fstream>
 #include <algorithm>
@@ -172,11 +174,14 @@ public:
             if (c == "y")
             {
                 cout << "1. Number Guessing Game" << endl;
-                cout << "2. " << endl;
+                cout << "2. Rock Paper Scissors" << endl;
                 cin >> game_c;
                 if (game_c == "1")
                 {
                     this->ngG();
+                } else if (game_c == "2")
+                {
+                    this->RPS();
                 }
             }
         } else
@@ -261,7 +266,79 @@ public:
             this->onlogIn();
         }
     }
-    
+    void ngG()
+    {
+        srand(static_cast<unsigned int>(time(nullptr)));
+        int sn = rand() % 100 + 1;
+        int guess;
+        int attempts = 0;
+
+        cout << "Welcome to the Random Number Guessing Game" << endl;
+        cout << "Try to guess the number between 1 and 100" << endl;
+
+        do
+        {
+            cout << "Enter your guess: ";
+            cin >> guess;
+            attempts++;
+
+            if (guess == sn)
+            {
+                cout << "Congratulations! You guessed the correct number in " << attempts << " attempts" << endl;
+            } else if (guess < sn)
+            {
+                cout << "Too low! Try again" << endl;
+            } else 
+            {
+                cout << "Too high! Try again" << endl;
+            }
+        } while (guess != sn);
+    }
+    void RPS()
+    {
+        srand(static_cast<unsigned int>(time(nullptr)));
+        const char* choices[] = {"Rock", "Paper", "Scissors"};
+        int userChoice;
+        int computerChoice;
+        string again;
+
+        cout << "Welcome to Rock, Paper, Scissors!" << endl;
+        cout << "Enter your choice! [0: rock, 1: paper, 2: scissors]";
+        cin >> userChoice;
+
+        if (userChoice < 0 || userChoice > 2)
+        {
+            cout << "Invaid choice. Please enter either 0, 1, or 2";
+        }
+
+        computerChoice = rand() % 3;
+
+        cout << "You choose " << choices[userChoice] << endl;
+        cout << "I chose " << choices[computerChoice] << endl;
+
+        if (userChoice == computerChoice)
+        {
+            cout << "It's a tie!" << endl;
+            cout << "Play again? [y/n]" << endl;
+            cin >> again;
+        } else if ((userChoice == 0 && computerChoice == 2) || (userChoice == 1 && computerChoice == 0) || (userChoice == 2 && computerChoice == 1)) 
+        {
+            cout << "You win!" << endl;
+            cout << "Play again? [y/n]" << endl;
+            cin >> again;
+        } else
+        {
+            cout << "I win!" << endl;
+            cout << "Play again? [y/n]";
+        }
+        if (again == "y")
+        {
+            this->RPS();
+        } else 
+        {
+            again;
+        }
+    }
 };
 
 int main()
