@@ -32,6 +32,7 @@ public:
     int no_users;
     string name;
     int cuhl; // current user hex length for managing perms
+    bool systemLogged;
     vector<User> usersV;
 
     void saveUsersToFile(const string &filename)
@@ -455,11 +456,14 @@ public:
         string c;
 
         cout << "Override succesful." << endl;
-        cout << "Enter system permisions password: ";
-        cin >> o_pass;
-
+        if (!systemLogged)
+        {
+            cout << "Enter system permisions password: ";
+            cin >> o_pass;
+        }
         if (o_pass == "akisboc") // a kiss is the beginning of cannibalism
         {
+            this->systemLogged = true;
             cout << "View system commands? [y/n]";
             cin >> b_c;
             if (b_c == "y")
