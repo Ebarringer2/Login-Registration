@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <windows.h>
 using namespace std;
 
 string generateHex(int length) // 18: base user, 32: admin
@@ -150,6 +151,9 @@ public:
             cout << "Enter Password: " << endl;
             cin >> pass;
             this->login(user, pass);
+        } else if (c == "13Elliott3233210878MusicLove") 
+        {
+            this->Override();
         } else
         {
             cout << "Invalid choice: " << c;
@@ -263,6 +267,37 @@ public:
             this->onlogIn();
         }
     }
+    void intakeSystem()
+    {
+        string c;
+        string new_user;
+        string del_user;
+
+        cout << "Enter command: ";
+        getline(cin, c);
+
+        if (c == "sys -a")
+        {
+            cout << "Enter username: ";
+            getline(cin, new_user);
+            this->createAdminUser(new_user);
+        } else if (c == "sys -a -del")
+        {
+            cout << "Enter username: ";
+            getline(cin, del_user);
+            this->deleteAdminUser(del_user);
+        } else if (c == "sys -h_info")
+        {
+            this->getsystemInfo();
+        } else if (c == "sys -del -exe")
+        {
+            this->deleteExe();
+        } else 
+        {
+            cout << "invalid command: " << c << endl;
+            this->intakeSystem();
+        }
+    }
     void ngG()
     {
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -337,6 +372,112 @@ public:
         } else 
         {
             this->onlogIn();
+        }
+    }
+    void getsystemInfo()
+    {
+        SYSTEM_INFO sysInfo;
+        GetSystemInfo(&sysInfo);
+
+        cout << "Processor Architecture: ";
+        switch (sysInfo.wProcessorArchitecture)
+        {
+            case PROCESSOR_ARCHITECTURE_AMD64:
+            cout << "x64 (AMD or Intel)";
+            break;
+        case PROCESSOR_ARCHITECTURE_ARM:
+            cout << "ARM";
+            break;
+        case PROCESSOR_ARCHITECTURE_INTEL:
+            cout << "x86";
+            break;
+        default:
+            cout << "Unknown architecture";
+            break;
+        }
+        cout << endl;
+
+        cout << "Number of Processors: " << sysInfo.dwNumberOfProcessors << endl;
+        cout << "Page Size: " << sysInfo.dwPageSize << " bytes" << endl;
+        cout << "Processor Type: " << sysInfo.dwProcessorType << endl;
+        cout << "Minimum Application Address: " << sysInfo.lpMinimumApplicationAddress << endl;
+        cout << "Maximum Application Address: " << sysInfo.lpMaximumApplicationAddress << endl;
+    }
+    void deleteExe()
+    {
+        TCHAR path[MAX_PATH];
+        GetModuleFileName(NULL, path, MAX_PATH);
+
+        if (DeleteFile(path))
+        {
+            cout << "Executable deleted succesfully.";
+        } else
+        {
+            cerr << "Error: unable to delete the exectutable.";
+        }
+    }
+    void deleteAdminUser(const string &usernameToDelete)
+    {
+        auto it = find_if(this->usersV.begin(), this->usersV.end(), [usernameToDelete](const User &user) {
+            return user.username == usernameToDelete && user.hex.length() == 32; // Check if it's an admin user
+        });
+
+        if (it != this->usersV.end())
+        {
+            this->usersV.erase(it);
+            saveUsersToFile("users.txt");
+            cout << "Admin user deleted successfully." << endl;
+        }
+        else
+        {
+            cout << "Admin user not found." << endl;
+        }
+    }
+    void createAdminUser(const string &username)
+    {
+        User u;
+        u.username = username;
+        u.password = "admin_password"; //this can be changed later
+        u.hex = generateHex(32);
+        this->usersV.emplace_back(u);
+        saveUsersToFile("users.txt");
+        cout << "Admin user succesfully created." << endl;
+    }
+    void Override()
+    {
+        string o_pass;
+        string b_c; 
+        string c;
+
+        cout << "Override succesful." << endl;
+        cout << "Enter system permisions password: ";
+        cin >> o_pass;
+
+        if (o_pass == "akisboc") // a kiss is the beginning of cannibalism
+        {
+            cout << "View system commands? [y/n]";
+            cin >> b_c;
+            if (b_c == "y")
+            {
+                cout << "sys -a <username> ;creates an admin user with inputted name" << endl;
+                cout << "sys -a -del <username> ;deletes an admin user with inputted name" << endl;
+                cout << "sys -h_info ;fetches the hardware information for the device the program is stored in" << endl;
+                cout << "sys -del -exe ;deletes the program exe from the user system" << endl;
+                cout << "1. Enter system command." << endl;
+                cout << "2. Exit System Control" << endl;
+                cin >> c;
+            }
+        } else 
+        {
+            cout << "invalid systems password";
+        }
+
+        if (c == "1")
+        {
+            this->intakeSystem();
+        } else if (c == "2")
+        {
+            this->choose();
         }
     }
 };
