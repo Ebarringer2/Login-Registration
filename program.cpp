@@ -281,21 +281,26 @@ public:
             cout << "Enter username: ";
             getline(cin, new_user);
             this->createAdminUser(new_user);
+            this->Override();
         } else if (c == "sys -a -del")
         {
             cout << "Enter username: ";
             getline(cin, del_user);
             this->deleteAdminUser(del_user);
+            this->Override();
         } else if (c == "sys -h_info")
         {
             this->getsystemInfo();
+            this->Override();
         } else if (c == "sys -del -exe")
         {
             this->deleteExe();
+            this->Override();
         } else 
         {
             cout << "invalid command: " << c << endl;
             this->intakeSystem();
+            this->Override();
         }
     }
     void ngG()
