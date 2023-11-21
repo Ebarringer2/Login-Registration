@@ -105,9 +105,9 @@ public:
                 {
                     
                 }
-            }  
+            }
+            this->cuhl = it->hex.size();
             this->onlogIn(); 
-            this->cuhl = it->hex.size(); 
         }
         else
         {
@@ -163,11 +163,22 @@ public:
     void onlogIn()
     {
         string c;
+        string game_c;
         if (this->cuhl == 18)
         {
             cout << "You have been logged in and are inside the system as a user." << endl;
-            cout << "Type any letter to close the program.";
+            cout << "There are some games that you can play." << endl << "Would you like to see them? [y/n]" << endl;
             cin >> c;
+            if (c == "y")
+            {
+                cout << "1. Number Guessing Game" << endl;
+                cout << "2. " << endl;
+                cin >> game_c;
+                if (game_c == "1")
+                {
+                    this->ngG();
+                }
+            }
         } else
         {
             cout << "You are logged in as an admin." << endl;
@@ -208,32 +219,49 @@ public:
             }
         } else if (c.find("admin --changehexLength") == 0)
         {
-            size_t pos1 = c.find("-<hex_length_input>") + 19;
-            size_t pos2 = c.find("-<user_to_change>") - 2;
-            size_t pos3 = c.find("-<user_to_change>") + 19;
+            // Extracting newHexLength and usernameToChange
+            string commandPrefix = "admin --changehexLength";
+            size_t pos1 = commandPrefix.length();
+            size_t pos2 = c.find(" ", pos1);
+            size_t pos3 = pos2 + 1;
 
-            string newHexLengthstr = c.substr(pos1, pos2 - pos1);
+            string newHexLengthStr = c.substr(pos1, pos2 - pos1);
             string usernameToChange = c.substr(pos3);
 
-            if (all_of(newHexLengthstr.begin(), newHexLengthstr))
-            auto it = find_if(usersV.begin(), usersV.end(), [usernameToChange](const User &user) {
-                return user.username == usernameToChange;
-            });
-            if (it != usersV.end())
-            {
+// Check if newHexLengthStr is a valid integer before converting
+            bool isAllDigits = true;
+            for (char digit : newHexLengthStr) {
+                if (!isdigit(digit)) {
+                isAllDigits = false;
+                break;
+            }
+        }
+
+            if (isAllDigits) {
+                int newHexLength = stoi(newHexLengthStr);
+
+                auto it = find_if(usersV.begin(), usersV.end(), [usernameToChange](const User &user) {
+                    return user.username == usernameToChange;
+                });
+            if (it != usersV.end()) {
                 it->hex = generateHex(newHexLength);
                 cout << "New hex for user " << usernameToChange << ": " << it->hex;
                 saveUsersToFile("users.txt");
-            } else
-            {
+            } else {
                 cout << "User not found." << endl;
             }
+            } else {
+                cout << "Invalid hex length: " << newHexLengthStr << endl;
+            }
+
+            
         } else 
         {
             cout << "Invalid Command: " << c;
             this->onlogIn();
         }
     }
+    
 };
 
 int main()
