@@ -241,7 +241,6 @@ public:
                 break;
             }
         }
-
             if (isAllDigits) {
                 int newHexLength = stoi(newHexLengthStr);
 
@@ -257,9 +256,7 @@ public:
             }
             } else {
                 cout << "Invalid hex length: " << newHexLengthStr << endl;
-            }
-
-            
+            } 
         } else 
         {
             cout << "Invalid Command: " << c;
@@ -285,6 +282,7 @@ public:
             if (guess == sn)
             {
                 cout << "Congratulations! You guessed the correct number in " << attempts << " attempts" << endl;
+                this->onlogIn();
             } else if (guess < sn)
             {
                 cout << "Too low! Try again" << endl;
@@ -330,13 +328,15 @@ public:
         {
             cout << "I win!" << endl;
             cout << "Play again? [y/n]";
+            cin >> again;
         }
+
         if (again == "y")
         {
             this->RPS();
         } else 
         {
-            again;
+            this->onlogIn();
         }
     }
 };
